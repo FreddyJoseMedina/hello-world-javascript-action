@@ -3,13 +3,13 @@ const github = require('@actions/github');
 
 try {
     // `who-to-greet` input defined in action metadata file
-    // const newMigrations = core.getInput('new-migrations');
-    // const newSeeders = core.getInput('new-seeders');
-    // const dir = core.getInput('dir');
+    const newMigrations = core.getInput('new-migrations');
+    const newSeeders = core.getInput('new-seeders');
+    const dir = core.getInput('dir');
 
-    const newMigrations ='1 2 3';
-    const newSeeders = ` `;
-    const dir = `dir`;
+    // const newMigrations ='1 2 3';
+    // const newSeeders = ` `;
+    // const dir = `dir`;
     console.log(`Hello mig ${newMigrations}!!!!!!!`);
     console.log(`Hello sed ${newSeeders}!!!!!!!`);
 
