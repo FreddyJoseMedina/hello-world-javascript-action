@@ -1,17 +1,22 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const {error} = require("@actions/core");
 
 try {
-    // `who-to-greet` input defined in action metadata file
+    // Inputs defined in action metadata file
     const newMigrations = core.getInput('new-migrations');
     const newSeeders = core.getInput('new-seeders');
     const dir = core.getInput('dir');
 
-    // const newMigrations ='1 2 3';
-    // const newSeeders = ` `;
-    // const dir = `dir`;
-    console.log(`Hello mig ${newMigrations}!!!!!!!`);
-    console.log(`Hello sed ${newSeeders}!!!!!!!`);
+    // Annotations
+    const liquibaseHeader = `--liquibase formatted sql`;
+    const liquibaseComment = `--comment: `;
+    const liquibaseChangeSet = `--changeset `;
+    const liquibaseFilePath = `logicalFilePath:`;
+
+    console.log(`Migrations -> ${newMigrations}`);
+    console.log(`Seeders -> ${newSeeders}`);
+    console.log(`dir -> ${dir} \n`);
 
     let newMigrationsArray = [];
     if (newMigrations != null) {
@@ -22,25 +27,105 @@ try {
         newSeedersArray = newSeeders.split(" ");
     }
 
-    console.log(`newMig ${newMigrationsArray} size ${newMigrationsArray.length}`)
-    console.log(`newSed ${newSeedersArray} size ${newSeedersArray.length}`)
-    console.log(`dir ${dir} size ${dir.length}`)
+    console.log(`New Migrations Files -> ${newMigrationsArray} \nQty of files = ${newMigrationsArray.length}`)
+    console.log(`New Sedeer Files -> ${newSeedersArray} \nQty of files = ${newSeedersArray.length}`)
+    console.log(`dir = ${dir} }`)
 
-    // const a = '11.sql 20.sql a.sql'
-    // if (a != null) {
-    //     console.log(`Hello ${a}     !!!!!!`);}
-    // const split_string = a.split(" ");
-    // console.log(split_string)
-    // const fs = require("fs");
-    // let contents = fs.readFileSync("/home/runner/work/ActionsTests/ActionsTests/Database/"+split_string[0]).toString().split(/\r?\n/);
-    // console.log(contents);
-    // const time = (new Date()).toTimeString();
-    // core.setOutput("time", time);
+    let migrationsStatus = 0;
 
+    if (newMigrationsArray.length > 0) {
+        for (let i = 0; i < newMigrationsArray.length; i++) {
 
-    // Get the JSON webhook payload for the event that triggered the workflow
-    // const payload = JSON.stringify(github.context.payload, undefined, 2)
-    // console.log(`The event payload: ${payload}`);
+            if (newMigrationsArray[i].endsWith(`.sql`)) {
+                const fs = require("fs");
+                let contents = fs.readFileSync(dir + `Database/Migrations` + newMigrationsArray[i]).toString().split(/\r?\n/);
+                console.log(contents);
+
+                if (contents[0].toString() === liquibaseHeader) {
+                    let numberOfComments = 0;
+                    let numberOfChangeSet = 0;
+
+                    for (let j = 1; j < contents.length; j++) {
+                        let line = contents[j].toString();
+
+                        if (line.startsWith(`--`)) {
+
+                            if (line.startsWith(liquibaseComment)) {
+                                numberOfComments = numberOfComments + 1;
+                            } else if (line.startsWith(liquibaseChangeSet) && line.includes(liquibaseFilePath)) {
+                                numberOfChangeSet = numberOfChangeSet + 1;
+                            } else {
+                                console.log(`File: ${newMigrationsArray[i]} don't match the Liquibase annotation on the Line # ${j + 1}.`)
+                                migrationsStatus = migrationsStatus + 1;
+                            }
+                        }
+                    }
+                    if (numberOfChangeSet === 0) {
+                        console.log(`No Changeset annotations were found in the file:${newMigrationsArray[i]}.`)
+                        migrationsStatus = migrationsStatus + 1;
+                    }
+                    if (numberOfComments === 0) {
+                        console.log(`No Coments annotations were found in the file:${newMigrationsArray[i]}.`)
+                        migrationsStatus = migrationsStatus + 1;
+                    }
+                } else {
+                    console.log(`File: ${newMigrationsArray[i]} don't match the Liquibase annotation on the Line # 1.`)
+                    migrationsStatus = migrationsStatus + 1;
+                }
+            }
+        }
+    }
+
+    let seedersStatus = 0;
+
+    if (newSeedersArray.length > 0) {
+        for (let i = 0; i < newSeedersArray.length; i++) {
+
+            if (newSeedersArray[i].endsWith(`.sql`)) {
+                const fs = require("fs");
+                let contents = fs.readFileSync(dir + `Database/Seeders` + newSeedersArray[i]).toString().split(/\r?\n/);
+                console.log(contents);
+
+                if (contents[0].toString() === liquibaseHeader) {
+                    let numberOfComments = 0;
+                    let numberOfChangeSet = 0;
+
+                    for (let j = 1; j < contents.length; j++) {
+                        let line = contents[j].toString();
+
+                        if (line.startsWith(`--`)) {
+
+                            if (line.startsWith(liquibaseComment)) {
+                                numberOfComments = numberOfComments + 1;
+                            } else if (line.startsWith(liquibaseChangeSet) && line.includes(liquibaseFilePath)) {
+                                numberOfChangeSet = numberOfChangeSet + 1;
+                            } else {
+                                console.log(`File: ${newSeedersArray[i]} don't match the Liquibase annotation on the Line # ${j + 1}.`)
+                                seedersStatus = seedersStatus + 1;
+                            }
+                        }
+                    }
+                    if (numberOfChangeSet === 0) {
+                        console.log(`No Changeset annotations were found in the file:${newSeedersArray[i]}.`)
+                        seedersStatus = seedersStatus + 1;
+                    }
+                    if (numberOfComments === 0) {
+                        console.log(`No Coments annotations were found in the file:${newSeedersArray[i]}.`)
+                        seedersStatus = seedersStatus + 1;
+                    }
+                } else {
+                    console.log(`File: ${newSeedersArray[i]} don't match the Liquibase annotation on the Line # 1.`)
+                    seedersStatus = seedersStatus + 1;
+                }
+            }
+        }
+    }
+
+    if (migrationsStatus > 0 || seedersStatus > 0) {
+        throw new error(`One or more files do not match Liquibase annotations.`, undefined);
+    }
+
 } catch (error) {
+    console.log(`Exit with error.`)
     core.setFailed(error.message);
 }
