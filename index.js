@@ -38,7 +38,7 @@ try {
 
             if (newMigrationsArray[i].endsWith(`.sql`)) {
                 const fs = require("fs");
-                let contents = fs.readFileSync(dir + `Database/Migrations` + newMigrationsArray[i]).toString().split(/\r?\n/);
+                let contents = fs.readFileSync(dir + `/Database/Migrations/` + newMigrationsArray[i]).toString().split(/\r?\n/);
                 console.log(contents);
 
                 if (contents[0].toString() === liquibaseHeader) {
@@ -83,7 +83,7 @@ try {
 
             if (newSeedersArray[i].endsWith(`.sql`)) {
                 const fs = require("fs");
-                let contents = fs.readFileSync(dir + `Database/Seeders` + newSeedersArray[i]).toString().split(/\r?\n/);
+                let contents = fs.readFileSync(dir + `/Database/Seeders/` + newSeedersArray[i]).toString().split(/\r?\n/);
                 console.log(contents);
 
                 if (contents[0].toString() === liquibaseHeader) {
