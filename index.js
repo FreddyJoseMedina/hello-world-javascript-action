@@ -10,8 +10,8 @@ try {
     const newMigrations ='1 2 3';
     const newSeeders = ` `;
     const dir = `dir`;
-    console.log(`Hello mig ${newMigrations}!!!!!!`);
-    console.log(`Hello sed ${newSeeders}!!!!!!`);
+    console.log(`Hello mig ${newMigrations}!!!!!!!`);
+    console.log(`Hello sed ${newSeeders}!!!!!!!`);
 
     let newMigrationsArray = [];
     if (newMigrations != null) {
