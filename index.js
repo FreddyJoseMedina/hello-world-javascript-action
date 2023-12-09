@@ -24,9 +24,9 @@ try {
         newSeedersArray = newSeeders.split(" ");
     }
 
-    console.log(`Migrations files with changes -> ${newMigrationsArray}`)
-    console.log(`Seeder files with changes -> ${newSeedersArray} `)
-    console.log(`Root path = ${dir} \n\n`)
+    console.log(`-Migrations files with changes -> ${newMigrationsArray}`)
+    console.log(`-Seeder files with changes -> ${newSeedersArray} `)
+    console.log(`-Root path = ${dir} \n\n`)
 
     let migrationsStatus = 0;
 
@@ -37,35 +37,37 @@ try {
                 const fs = require("fs");
                 let contents = fs.readFileSync(dir + `/Database/Migration/` + newMigrationsArray[i]).toString().split(/\r?\n/);
 
-                if (contents[0].toString() === liquibaseHeader) {
-                    let numberOfComments = 0;
-                    let numberOfChangeSet = 0;
+                if (contents[0].toString() !== liquibaseHeader) {
+                    console.log(`File: ${newMigrationsArray[i]} don't match the Liquibase annotation on the Line # 1.`)
+                    migrationsStatus = migrationsStatus + 1;
+                }
 
-                    for (let j = 1; j < contents.length; j++) {
-                        let line = contents[j].toString();
+                let numberOfComments = 0;
+                let numberOfChangeSet = 0;
 
-                        if (line.startsWith(`--`)) {
+                for (let j = 1; j < contents.length; j++) {
+                    let line = contents[j].toString();
 
-                            if (line.startsWith(liquibaseComment)) {
-                                numberOfComments = numberOfComments + 1;
-                            } else if (line.startsWith(liquibaseChangeSet) && line.includes(liquibaseFilePath)) {
-                                numberOfChangeSet = numberOfChangeSet + 1;
-                            } else {
-                                console.log(`File: ${newMigrationsArray[i]} don't match the Liquibase annotation on the Line # ${j + 1}.`)
-                                migrationsStatus = migrationsStatus + 1;
-                            }
+                    if (line.startsWith(`--`)) {
+
+                        if (line.startsWith(liquibaseComment)) {
+                            numberOfComments = numberOfComments + 1;
+                        } else if (line.startsWith(liquibaseChangeSet) && line.includes(liquibaseFilePath)) {
+                            numberOfChangeSet = numberOfChangeSet + 1;
+                        } else {
+                            console.log(`File: ${newMigrationsArray[i]} don't match the Liquibase annotation on the Line # ${j + 1}.`)
+                            migrationsStatus = migrationsStatus + 1;
                         }
                     }
-                    if (numberOfChangeSet === 0) {
-                        console.log(`No Changeset annotations were found in the file:${newMigrationsArray[i]}.`)
-                        migrationsStatus = migrationsStatus + 1;
-                    }
-                    if (numberOfComments === 0) {
-                        console.log(`No Coments annotations were found in the file:${newMigrationsArray[i]}.`)
-                        migrationsStatus = migrationsStatus + 1;
-                    }
-                } else {
-                    console.log(`File: ${newMigrationsArray[i]} don't match the Liquibase annotation on the Line # 1.`)
+                }
+
+                if (numberOfChangeSet === 0) {
+                    console.log(`No Changeset annotations were found in the file:${newMigrationsArray[i]}.`)
+                    migrationsStatus = migrationsStatus + 1;
+                }
+
+                if (numberOfComments === 0) {
+                    console.log(`No Coments annotations were found in the file:${newMigrationsArray[i]}.`)
                     migrationsStatus = migrationsStatus + 1;
                 }
             }
@@ -81,35 +83,37 @@ try {
                 const fs = require("fs");
                 let contents = fs.readFileSync(dir + `/Database/Seeders/` + newSeedersArray[i]).toString().split(/\r?\n/);
 
-                if (contents[0].toString() === liquibaseHeader) {
-                    let numberOfComments = 0;
-                    let numberOfChangeSet = 0;
+                if (contents[0].toString() !== liquibaseHeader) {
+                    console.log(`File: ${newSeedersArray[i]} don't match the Liquibase annotation on the Line # 1.`)
+                    seedersStatus = seedersStatus + 1;
+                }
 
-                    for (let j = 1; j < contents.length; j++) {
-                        let line = contents[j].toString();
+                let numberOfComments = 0;
+                let numberOfChangeSet = 0;
 
-                        if (line.startsWith(`--`)) {
+                for (let j = 1; j < contents.length; j++) {
+                    let line = contents[j].toString();
 
-                            if (line.startsWith(liquibaseComment)) {
-                                numberOfComments = numberOfComments + 1;
-                            } else if (line.startsWith(liquibaseChangeSet) && line.includes(liquibaseFilePath)) {
-                                numberOfChangeSet = numberOfChangeSet + 1;
-                            } else {
-                                console.log(`File: ${newSeedersArray[i]} don't match the Liquibase annotation on the Line # ${j + 1}.`)
-                                seedersStatus = seedersStatus + 1;
-                            }
+                    if (line.startsWith(`--`)) {
+
+                        if (line.startsWith(liquibaseComment)) {
+                            numberOfComments = numberOfComments + 1;
+                        } else if (line.startsWith(liquibaseChangeSet) && line.includes(liquibaseFilePath)) {
+                            numberOfChangeSet = numberOfChangeSet + 1;
+                        } else {
+                            console.log(`File: ${newSeedersArray[i]} don't match the Liquibase annotation on the Line # ${j + 1}.`)
+                            seedersStatus = seedersStatus + 1;
                         }
                     }
-                    if (numberOfChangeSet === 0) {
-                        console.log(`No Changeset annotations were found in the file:${newSeedersArray[i]}.`)
-                        seedersStatus = seedersStatus + 1;
-                    }
-                    if (numberOfComments === 0) {
-                        console.log(`No Coments annotations were found in the file:${newSeedersArray[i]}.`)
-                        seedersStatus = seedersStatus + 1;
-                    }
-                } else {
-                    console.log(`File: ${newSeedersArray[i]} don't match the Liquibase annotation on the Line # 1.`)
+                }
+
+                if (numberOfChangeSet === 0) {
+                    console.log(`No Changeset annotations were found in the file:${newSeedersArray[i]}.`)
+                    seedersStatus = seedersStatus + 1;
+                }
+
+                if (numberOfComments === 0) {
+                    console.log(`No Coments annotations were found in the file:${newSeedersArray[i]}.`)
                     seedersStatus = seedersStatus + 1;
                 }
             }
