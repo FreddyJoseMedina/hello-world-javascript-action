@@ -3,33 +3,30 @@ const github = require('@actions/github');
 const {error} = require("@actions/core");
 
 try {
-    // Inputs defined in action metadata file
+    // Inputs defined in action metadata file.
     const newMigrations = core.getInput('new-migrations');
     const newSeeders = core.getInput('new-seeders');
     const dir = core.getInput('dir');
 
-    // Annotations
+    // Annotations to check.
     const liquibaseHeader = `--liquibase formatted sql`;
     const liquibaseComment = `--comment: `;
     const liquibaseChangeSet = `--changeset `;
     const liquibaseFilePath = `logicalFilePath:`;
 
-    console.log(`Migrations -> ${newMigrations}`);
-    console.log(`Seeders -> ${newSeeders}`);
-    console.log(`dir -> ${dir} \n`);
-
     let newMigrationsArray = [];
     if (newMigrations != null) {
         newMigrationsArray = newMigrations.split(" ");
     }
+
     let newSeedersArray = [];
     if (newSeeders != null) {
         newSeedersArray = newSeeders.split(" ");
     }
 
-    console.log(`New Migrations Files -> ${newMigrationsArray} \nQty of files = ${newMigrationsArray.length}`)
-    console.log(`New Sedeer Files -> ${newSeedersArray} \nQty of files = ${newSeedersArray.length}`)
-    console.log(`dir = ${dir} }`)
+    console.log(`Migrations files with changes -> ${newMigrationsArray}`)
+    console.log(`Seeder files with changes -> ${newSeedersArray} `)
+    console.log(`Root path = ${dir} \n\n`)
 
     let migrationsStatus = 0;
 
