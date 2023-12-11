@@ -1,21 +1,25 @@
-name: 'Hello World'
-description: 'Sql filde checker.'
+name: 'SQL file validator'
+description: 'Validates if the SQL files pushed in the PR meet the necessary standard.'
 inputs:
-  new-migrations:  # id of input
+  new-migrations:  # Migrations files with changes.
     description: 'New migrations files'
     required: true
 
-  new-seeders:  # id of input
+  new-seeders:  # Seeders files with changes.
     description: 'New seeders files'
     required: true
 
-  dir:  # id of input
+  dir:  # Root of the new or changed files.
     description: 'path to files.'
     required: true
 
+  feature-flag:  # Feature flag to enable the validator.
+    description: 'Feature flag to enable the exit action for the Workflow.'
+    required: true
+    default: 'false'
+
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+
 runs:
   using: 'node20'
   main: 'index.js'
