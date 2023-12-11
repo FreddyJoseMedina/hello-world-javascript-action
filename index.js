@@ -20,13 +20,6 @@ try {
     const featureFlag = core.getInput('feature-flag');
     let featureFlagStatus = (featureFlag === 'true')
 
-    console.log(`FF ${featureFlag}`);
-    if (featureFlagStatus === true) {
-        console.log(`is True`);
-    } else if (featureFlagStatus === false) {
-        console.log(`is false`);
-    }
-
     let newMigrationsArray = [];
     if (newMigrations != null) {
         newMigrationsArray = newMigrations.split(" ");
@@ -79,14 +72,14 @@ try {
                 }
 
                 if (numberOfComments === 0) {
-                    console.log(`\nThe File does not present any Comment type annotation with the proper format.. [File:${newMigrationsArray[i]}] [Format:${liquibaseFullComment}]`)
-                    console.log(`There must be at least one Comment type annotation in the file.`)
+                    console.log(`\nThe File does not present any Comment type annotation with the proper format. [File:${newMigrationsArray[i]}]`)
+                    console.log(`There must be at least one Comment type annotation in the file.\ne.g: ${liquibaseFullComment}`)
                     migrationsStatus = migrationsStatus + 1;
                 }
 
                 if (numberOfChangeSet === 0) {
-                    console.log(`\nThe File does not present any Changeset type annotation with the proper format. [File:${newMigrationsArray[i]}] [Format:${liquibaseFullChangeset}]`)
-                    console.log(`There must be at least one Changeset type annotation in the file.`)
+                    console.log(`\nThe File does not present any Changeset type annotation with the proper format. [File:${newMigrationsArray[i]}]`)
+                    console.log(`There must be at least one Changeset type annotation in the file.\ne.g: ${liquibaseFullChangeset}`)
                     migrationsStatus = migrationsStatus + 1;
                 }
             }
@@ -131,14 +124,14 @@ try {
                 }
 
                 if (numberOfComments === 0) {
-                    console.log(`\nThe File does not present any Comment type annotation with the proper format. [File:${newSeedersArray[i]}] [Format:${liquibaseFullComment}]`)
-                    console.log(`There must be at least one Comment type annotation in the file.`)
+                    console.log(`\nThe File does not present any Comment type annotation with the proper format. [File:${newSeedersArray[i]}]`)
+                    console.log(`There must be at least one Comment type annotation in the file.\ne.g: ${liquibaseFullComment}`)
                     seedersStatus = seedersStatus + 1;
                 }
 
                 if (numberOfChangeSet === 0) {
-                    console.log(`\nThe File does not present any Changeset type annotation with the proper format.. [File:${newSeedersArray[i]}] [Format:${liquibaseFullChangeset}]`)
-                    console.log(`There must be at least one Changeset type annotation in the file.`)
+                    console.log(`\nThe File does not present any Changeset type annotation with the proper format. [File:${newSeedersArray[i]}]`)
+                    console.log(`There must be at least one Changeset type annotation in the file.\ne.g: ${liquibaseFullChangeset}`)
                     seedersStatus = seedersStatus + 1;
                 }
             }
@@ -146,9 +139,11 @@ try {
         }
     }
 
-    if (migrationsStatus > 0 || seedersStatus > 0) {
-        console.log(`****** SQL file validator Ended ******`)
-        throw new error(`One or more files do not match Liquibase annotations.`, undefined);
+    if (featureFlagStatus) {
+        if (migrationsStatus > 0 || seedersStatus > 0) {
+            console.log(`****** SQL file validator Ended ******`)
+            throw new error(`One or more files do not match Liquibase annotations.`, undefined);
+        }
     }
 
     console.log(`****** SQL file validator Ended ******`)
