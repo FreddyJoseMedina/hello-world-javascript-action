@@ -139,14 +139,18 @@ try {
         }
     }
 
-    if (featureFlagStatus) {
-        if (migrationsStatus > 0 || seedersStatus > 0) {
-            console.log(`****** SQL file validator Ended ******`)
+    if (migrationsStatus > 0 || seedersStatus > 0) {
+        core.setOutput("successful-validation", false);
+        console.log(`****** SQL file validator Ended ******`)
+
+        if (featureFlagStatus) {
             throw new error(`One or more files do not match Liquibase annotations.`, undefined);
         }
-    }
 
-    console.log(`****** SQL file validator Ended ******`)
+    } else {
+        core.setOutput("successful-validation", true);
+        console.log(`****** SQL file validator Ended ******`)
+    }
 
 } catch (error) {
     console.log(`Exit with error.`)

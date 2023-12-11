@@ -18,6 +18,9 @@ inputs:
     required: true
     default: 'false'
 
+outputs:
+  successful-validation: # Validation Status.
+    description: 'Status of the files validation.'
 runs:
   using: 'node20'
   main: 'index.js'
