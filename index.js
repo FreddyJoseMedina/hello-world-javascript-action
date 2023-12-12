@@ -43,7 +43,7 @@ try {
             if (newMigrationsArray[i].endsWith(`.sql`)) {
                 console.log(`Checking file => ${newMigrationsArray[i]}`)
                 const fs = require("fs");
-                let contents = fs.readFileSync(dir + `/Database/Migration/` + newMigrationsArray[i]).toString().split(/\r?\n/);
+                let contents = fs.readFileSync(dir + `/database/migrations/` + newMigrationsArray[i]).toString().split(/\r?\n/);
 
                 if (contents[0].toString() !== liquibaseHeader) {
                     console.log(`\nThe file does not meet the required annotation format. [File:${newMigrationsArray[i]}] [Line number: 1].`)
@@ -82,8 +82,8 @@ try {
                     console.log(`There must be at least one Changeset type annotation in the file.\ne.g: ${liquibaseFullChangeset}`)
                     migrationsStatus = migrationsStatus + 1;
                 }
+                console.log(`File checked. \n`)
             }
-            console.log(`File checked. \n`)
         }
     }
 
@@ -95,7 +95,7 @@ try {
             if (newSeedersArray[i].endsWith(`.sql`)) {
                 console.log(`Checking file => ${newSeedersArray[i]}`)
                 const fs = require("fs");
-                let contents = fs.readFileSync(dir + `/Database/Seeders/` + newSeedersArray[i]).toString().split(/\r?\n/);
+                let contents = fs.readFileSync(dir + `/database/seeders/` + newSeedersArray[i]).toString().split(/\r?\n/);
 
                 if (contents[0].toString() !== liquibaseHeader) {
                     console.log(`\nThe file does not meet the required annotation format. [File:${newSeedersArray[i]}] [Line number: 1].`)
@@ -134,8 +134,8 @@ try {
                     console.log(`There must be at least one Changeset type annotation in the file.\ne.g: ${liquibaseFullChangeset}`)
                     seedersStatus = seedersStatus + 1;
                 }
+                console.log(`File checked. \n`)
             }
-            console.log(`File checked. \n`)
         }
     }
 
