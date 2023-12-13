@@ -18,6 +18,22 @@ inputs:
     required: true
     default: 'false'
 
+  token:  # token from github
+    description: 'token from github'
+    required: true
+
+  pass-emoji:  # emoji when the validator pass.
+    description: 'emoji when the validator pass'
+    required: true
+
+  fail-emoji:  # emoji when the validator fails.
+    description: 'emoji when the validator fails'
+    required: true
+
+  job-url:  # url of the job.
+    description: 'url of the job'
+    required: true
+
 outputs:
   successful-validation: # Validation Status.
     description: 'Status of the files validation.'
